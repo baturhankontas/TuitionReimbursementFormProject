@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="styles_login.css">
+	<title>Login Page</title>
+	<link rel="shortcut icon" href="#">
+	<link rel="stylesheet" type="text/css" href="styles_login.css">
+</head>
+<body>
+
+
+	<div class="login">
+		<h1>Login</h1>
+		  
+			<input id="name1" type="text"  placeholder="Name" required="required" />
+			<input id="surname1" type="text"  placeholder="Surname" required="required" />
+			<button id="loginButton" onclick="getLogin()" class="btn btn-primary btn-block btn-large">Let me in.</button>
+		  
+	  </div>
+	  
+	  
+</body>
+<script>
+	function getLogin(){
+		let name1= document.getElementById("name1").value;
+		let surname1=document.getElementById("surname1").value;
+		let xhttp=new XMLHttpRequest();
+		
+		xhttp.onreadystatechange=function(){
+			if(this.readyState==4 & this.status==200)
+			{	console.log(this.responseText);
+				let user=JSON.parse(this.responseText);
+				if(user.name==name1 & user.surname==surname1){
+					console.log("Correct User");
+					location.replace("http://localhost:8080/TuitionPro/main.html?name"+user.name+"&surname="+user.surname+"&dept="+user.department_id+"&supervisor"+user.supervisor_id+"&benco"+user.benco+"&id"+user.id);
+				}
+				else{
+					window.alert("You are the bad one!")
+				}
+			}
+		}
+		xhttp.open("GET","http://localhost:8080/TuitionPro/getLogin.do?name="+name1+"&surname="+surname1,true);
+		xhttp.send();
+	}
+</script>
+</html>

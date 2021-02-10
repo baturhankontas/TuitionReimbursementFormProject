@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        input[type=text], select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        
+        input[type=submit] {
+          width: 100%;
+          background-color: #4CAF50;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+          background-color: #45a049;
+        }
+        
+        div {
+          border-radius: 5px;
+          background-color: #f2f2f2;
+          padding: 20px;
+        }
+        </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="#">
+    <title>Create Form</title>
+</head>
+<body>
+    <br>
+    <br>
+    <br>
+    <h2 style="text-align:center; color:rgb(99, 96, 96); font-weight:bold" >Tuition Form</h2>
+    <br>
+    <br>
+    <br>
+    <div>
+    <label>Event Name</label>
+     <input type="text" placeholder="name" class="form-control" id="name">
+    <label>Event Date</label>
+    <input type="date" placeholder="Event Date" class="form-control" min=2021-02-18 id="date">
+    <label>Event Time</label>
+    <input type="number" placeholder="Event Time" class="form-control"min="0000" max="2400"id="time">
+    <label>Event Location</label>
+    <input type="text" placeholder="Location" class="form-control" id="location"> 
+    <label>Event Type</label> <br>
+    <select name="types"  class="form-control" id="event_type">
+        <option value="1">University Courses</option>
+        <option value="2">Seminars</option>
+        <option value="3">Certification Prep Classes</option>
+        <option value="4">Certification</option>
+        <option value="5">Technical Training</option>
+        <option value="6">Other</option>
+      </select>
+    <label>Description</label> 
+    <input type="text" placeholder="Description" class="form-control"id="description">
+    <label>Amount</label> 
+    <input type="number" placeholder="Amount" class="form-control" min="1" max="1000" id="amount">
+    <label>Notes</label>
+    <input type="text" placeholder="Notes" class="form-control" id="notes">
+    <label>Time Off</label> 
+    <input type="number" placeholder="Time Off" class="form-control"id="hour">
+    <label>Today Date</label> 
+    <input type="date" placeholder="Today Date" class="form-control"id="currentdate">
+    
+    <br> 
+    <button  onclick="addEvent()" data-toggle="modal" data-target="#exampleModal" class="btn btn-primary" >Add Form</button>
+    <div class="modal" id="exampleModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Form Added</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Tuition Form added succesfully</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="gotoMain()">Go to Main Menu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+</div>
+<br><br><br>
+    <button onclick="gotoMain()" type="button" class="btn btn-danger btn-primary btn-lg btn-block "  onclick="">Go to Main Menu</button>
+
+</body>
+<script>
+    function gotoMain(){
+        window.location.href="http://localhost:8080/TuitionPro/main.html";
+    }
+function addEvent(){
+    
+    let aname=document.getElementById("name").value;
+    let adate=document.getElementById("date").value;
+    let atime=document.getElementById("time").value;
+    let aloc=document.getElementById("location").value;
+    let drop=document.getElementById("event_type");
+    let atype=drop.options[drop.selectedIndex].value;
+   
+
+    let event={
+        event_id:0,
+        event_emp_id:0,
+        date:adate,
+        time:atime,
+        name:aname,
+        location:aloc,
+        type_id:atype
+
+    }
+    
+
+    let xhttp = new XMLHttpRequest();
+    
+    xhttp.onreadystatechange = function() {
+
+        if(this.readyState == 4 && this.status == 200) {
+
+            console.log(this.responseText);
+            addForm();
+
+        }
+
+    }
+
+    xhttp.open("POST", "http://localhost:8080/TuitionPro/createEvent.do", true);
+    xhttp.setRequestHeader('Content-Type','application/json');
+
+    xhttp.send(JSON.stringify(event));
+}
+function addForm(){
+    
+    let am=document.getElementById("amount").value;
+    let anotes=document.getElementById("notes").value;
+    let cdate=document.getElementById("currentdate").value;
+    let ahour=document.getElementById("hour").value;
+    let adesc=document.getElementById("description").value;
+    
+    let Tuition_Form={
+        form_id:0,
+        date:cdate,
+        description:adesc,
+        amount:am,
+        notes:anotes,
+        status:"WAITING",
+        event_id:0,
+        emp_id:0,
+        emp_time_off:ahour
+    }
+    
+    let xhttp1= new XMLHttpRequest();
+    xhttp1.onreadystatechange = function() {
+
+
+        if(this.readyState == 4 && this.status == 200) {
+
+            console.log(this.responseText);
+
+        }   
+
+    }
+
+    xhttp1.open("POST", "http://localhost:8080/TuitionPro/createForm.do", true);
+    xhttp1.setRequestHeader('Content-Type','application/json');
+
+    xhttp1.send(JSON.stringify(Tuition_Form));
+}
+</script>
+</html>

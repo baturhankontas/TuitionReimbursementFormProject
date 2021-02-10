@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <style>
+        input[type=text], select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        
+        input[type=submit] {
+          width: 100%;
+          background-color: #4CAF50;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+          background-color: #45a049;
+        }
+        
+        div {
+          border-radius: 5px;
+          background-color: #f2f2f2;
+          padding: 20px;
+        }
+        </style>
+    <link rel="shortcut icon" href="#">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approve List</title>
+</head>
+<body><br>
+    <h3>Reimbursement Waiting List</h3><br><br>
+    <div>
+    
+    <table id="resTable"class="table table-striped">
+        <thead id="approvalHead"></thead>
+    <tbody id="approvalBody"></tbody> 
+</table>
+    <button class="btn btn-primary" onclick="getForms()">Get List</button>
+    
+    <h3>Write Comment</h3>
+    <label>Event ID</label>
+    <input id="form" type="number"><br>
+    <label>Comment</label>
+    <input id="comment" type="name">
+    <button class="btn btn-primary" onclick="addInComment(); alertFunction2()">Add into Old Comment</button><button class="btn btn-primary" onclick="addNewComment(); alertFunction3()">Write new comment</button>
+    <br><br><br><br><br><br>
+    
+    <!--<button class="btn btn-primary" onclick="approve(); alertFunction();">Approve</button>
+    <button class="btn btn-primary" onclick="reject(); alertFunction1();">Reject</button>-->
+</div>
+    <button onclick="window.location.href='http://localhost:8080/TuitionPro/main.html'" type="button" class="btn btn-danger btn-primary btn-lg btn-block " style=" position:absolute; bottom:0;" onclick="">Go Back to Main Menu</button>
+
+</body>
+<script>
+    function alertFunction() {
+            alert("approved!");
+}
+function alertFunction1() {
+            alert("rejected!");
+}function alertFunction2() {
+            alert("comment added!");
+}function alertFunction3() {
+            alert("comment added!");
+}
+    function getForms() {                   //////get forms
+        
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+                
+                console.log(this.responseText);
+                let forms=JSON.parse(this.responseText);
+                
+                let tablehead=document.getElementById("approvalHead");
+                let row1=tablehead.insertRow();
+                let cell1=row1.insertCell(0);
+                cell1.innerHTML="DATE";
+                let cell2=row1.insertCell(1);
+                cell2.innerHTML="DESCRIPTION";
+                let cell3=row1.insertCell(2);
+                cell3.innerHTML="AMOUNT";
+                let cell4=row1.insertCell(3);
+                cell4.innerHTML="STATUS";
+                let cell5=row1.insertCell(4);
+                cell5.innerHTML="EVENT ID";
+                let cell6=row1.insertCell(5);
+                cell6.innerHTML="EMPLOYEE ID";
+                let cell7=row1.insertCell(6);
+                cell7.innerHTML="EMP TIME OFF";
+                let cell8=row1.insertCell(7);
+                cell8.innerHTML="NOTES";
+                let cell9=row1.insertCell(8);
+                cell9.innerHTML="APPROVE";
+                let cell10=row1.insertCell(9);
+                cell10.innerHTML="REJECT";
+
+
+
+                for(var i=0;i<forms.length;i++){
+                
+                    const tbody=document.getElementById("approvalBody");
+                    var date= forms[i].date;
+                    var description=forms[i].description;
+                    var amount=forms[i].amount;
+                    var status=forms[i].status;
+                    var event_id=forms[i].event_id;
+                    var emp_id=forms[i].emp_id;
+                    var emp_time_off=forms[i].emp_time_off;
+                    var notes=forms[i].notes;
+
+                    let row=tbody.insertRow();
+                    let adate=row.insertCell(0);
+                    adate.innerHTML=date;
+                    let desc=row.insertCell(1);
+                    desc.innerHTML=description;
+                    let mount=row.insertCell(2);
+                    mount.innerHTML=amount;
+                    let statust=row.insertCell(3);
+                    statust.innerHTML=status;
+                    let eid=row.insertCell(4);
+                    eid.innerHTML=event_id;
+                    let empid=row.insertCell(5);
+                    empid.innerHTML=emp_id;
+                    let eto=row.insertCell(6);
+                    eto.innerHTML=emp_time_off;
+                    let note=row.insertCell(7);
+                    note.innerHTML=notes;
+                    let approve=row.insertCell(8);
+                    approve.innerHTML=`<button onclick=approve(${forms[i].event_id}) class='btn btn-primary'>Approve</button>`;
+                    let reject1=row.insertCell(9);
+                    reject1.innerHTML=`<button onclick=reject(${forms[i].event_id}) class='btn btn-primary'>Deny</button>`;
+            }
+
+            }
+            
+
+        
+
+        }
+        xhttp.open("GET", "http://localhost:8080/TuitionPro/getForm.do", true);
+
+        xhttp.send();
+
+    }
+    
+
+    function addInComment(){        ///after he choose which form, he will be able to add comment on that form in the notes
+        let eid=document.getElementById("form").value;
+        let com=document.getElementById("comment").value;
+        
+        let Tuition_Form={
+        form_id:eid,
+        date:null,
+        description:null,
+        amount:null,
+        notes:com,
+        status:"PROCESS",
+        event_id:null,
+        emp_id:null,
+        emp_time_off:null
+        }
+
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+
+                console.log(this.responseText);
+
+            }
+
+        }
+
+        console.log(Tuition_Form);
+
+        xhttp.open("POST", "http://localhost:8080/TuitionPro/addToOldForm.do", true);
+
+        
+        xhttp.setRequestHeader('Content-Type','application/json');
+
+    
+        xhttp.send(JSON.stringify(Tuition_Form));
+
+
+    }
+    function addNewComment(){        ///after he choose which form, he will be able to WRITE NEW COMMENT on that form in the notes
+        let eid=document.getElementById("form").value;
+        let com=document.getElementById("comment").value;
+        
+        let Tuition_Form={
+        form_id:eid,
+        date:null,
+        description:null,
+        amount:null,
+        notes:com,
+        status:"PROCESS",
+        event_id:null,
+        emp_id:null,
+        emp_time_off:null
+        }
+
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+
+                console.log(this.responseText);
+
+            }
+
+        }
+
+        xhttp.open("POST", "http://localhost:8080/TuitionPro/updateForm.do", true);
+
+        
+        xhttp.setRequestHeader('Content-Type','application/json');
+
+    
+        xhttp.send(JSON.stringify(Tuition_Form));
+    }
+
+      
+    function approve(event_id){                 ///after he choose which form, he will approve it will change tuition form and event_approval
+    //let event=document.getElementById("form").value;    
+    let app="Y";
+    
+
+
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+
+                console.log(this.responseText);
+
+            }
+
+        }
+        console.log(event_id);
+        xhttp.open("POST", "http://localhost:8080/TuitionPro/addApproval.do?app="+app+"&event="+event_id, true);
+
+    
+        xhttp.send();
+
+    }
+    function reject(event_id){                  ///after he choose which form, he will reject it will change tuition form and event_approval
+    //let event=document.getElementById("form").value;    
+    let app="N";
+
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+
+                console.log(this.responseText);
+
+            }
+
+        }
+        console.log(event_id);
+        xhttp.open("POST", "http://localhost:8080/TuitionPro/addApproval.do?app="+app+"&event="+event_id, true);
+
+    
+        xhttp.send();
+
+    }
+
+</script>
+</html>

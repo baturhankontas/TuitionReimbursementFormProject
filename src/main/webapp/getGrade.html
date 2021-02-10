@@ -1,0 +1,168 @@
+
+<!--need attention on print list-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <style>
+        input[type=text], select {
+          width: 100%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+        
+        input[type=submit] {
+          width: 100%;
+          background-color: #4CAF50;
+          color: white;
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        
+        input[type=submit]:hover {
+          background-color: #45a049;
+        }
+        
+        div {
+          border-radius: 5px;
+          background-color: #f2f2f2;
+          padding: 20px;
+        }
+        </style>    
+    <link rel="shortcut icon" href="#">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>See the Grades</title>
+</head>
+<body>
+    <div>
+    <h3>List of Reimbursement Forms</h3>
+    
+    <table id="resTable"class="table table-striped"> </table>
+    <button  class="btn btn-primary"onclick="getForms()">Bring the Forms</button><br><br>
+
+    <input id="aid" type="number">
+    <button class="btn btn-primary" onclick="getGrades()">Show Grades</button>
+    <p id="result"></p>
+
+
+    <button class="btn btn-primary" onclick="addApprove(); alertFunction();">Approve</button>
+</div>
+    <button onclick="window.location.href='http://localhost:8080/TuitionPro/main.html'" type="button" class="btn btn-danger btn-primary btn-lg btn-block " style=" position:absolute; bottom:0;" onclick="">Go Back to Main Menu</button>
+
+</body>
+<script>
+function alertFunction(){
+    alert("approved!");
+}
+function getForms(){
+    
+    let xhttp= new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+
+        if(this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+            
+                
+                let event = JSON.parse(this.responseText);
+                let size=event.length;
+                resTable.innerHTML=`<tr>
+                                  <th>Event ID</th>
+                                  <th>Employee ID</th>
+                                  <th>Date</th>
+                                  <th>Time</th>
+                                  <th>Name</th>
+                                  <th>Location</th>
+                                  <th>Type ID</th>
+                                  <th></th></tr>`
+                
+                for(i=0;i<event.length;i++){
+                
+                let row=table.insertRow(1);
+                let cell1=row.insertCell(0);
+                let cell2=row.insertCell(1);
+                let cell3=row.insertCell(2);
+                let cell4=row.insertCell(3);
+                let cell5=row.insertCell(4);
+                let cell6=row.insertCell(5);
+                let cell7=row.insertCell(6);
+              
+
+                cell1.innerHTML=event[i].event_id
+                cell2.innerHTML=event[i].event_emp_id
+                cell3.innerHTML=event[i].date
+                cell4.innerHTML=event[i].time
+                cell5.innerHTML=event[i].name
+                cell6.innerHTML=event[i].location
+                cell7.innerHTML=event[i].type_id
+            
+
+            
+           
+        
+         
+         } 
+        
+
+    }}
+
+    xhttp.open("GET", "http://localhost:8080/TuitionPro/seeGradeOfAll.do", true);
+
+    xhttp.send();
+
+}
+function getGrades(){
+    let id=document.getElementById("aid").value;
+    let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                
+                let grade = JSON.parse(this.responseText);
+
+                let result= `ID: ${grade.event_id} \t\t\t GRADE: ${grade.event_grade}`
+
+                document.getElementById("result").innerHTML = result;
+            }
+
+        }
+
+        xhttp.open("GET", "http://localhost:8080/TuitionPro/getGrade.do?id=" + id, true);
+
+        xhttp.send();
+
+}
+function addApprove(){
+    let id=document.getElementById("aid").value;
+    let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                
+                
+
+                document.getElementById("result").innerHTML = result;
+            }
+
+        }
+
+        xhttp.open("POST", "http://localhost:8080/TuitionPro/addApprove.do?id=" + id, true);
+
+        xhttp.send();
+
+}
+
+</script>
+</html>

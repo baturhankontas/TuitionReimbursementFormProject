@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">,
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+<style>
+    input[type=text], select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+      background-color: #45a049;
+    }
+    
+    div {
+      border-radius: 5px;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Grade</title>
+<link rel="shortcut icon" href="#">
+</head>
+<body>
+    <h3>List of Reimbursement Forms</h3><br><br>
+
+    <div>
+   
+    <table id="resTable"class="table table-striped"> </table>
+    <button class="btn btn-primary" onclick="getForms()">Bring the Forms</button><br><br>
+    
+    
+    <h3>Add Grade for which Reimbursement</h3>
+    <label>Enter Event</label>
+    <input id="form" type="number">
+    <br><br><br><br>
+    <input id="grade" type="text">
+    <button onclick="addGrade(); alertFunction()" data-toggle="modal" data-target="#exampleModal" class="btn btn-primary" >Add Grade</button>
+    
+      
+</div>
+    <button onclick="window.location.href='http://localhost:8080/TuitionPro/main.html'" type="button" class="btn btn-danger btn-primary btn-lg btn-block " style=" position:absolute; bottom:0;" onclick="">Go Back to Main Menu</button>
+
+</body>
+<script>
+    function alertFunction() {
+            alert("Grade added!");
+}
+    function getForms(){
+        
+        let xhttp= new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+
+            if(this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                let event = JSON.parse(this.responseText);
+                if(event.length==0){return;}    
+                var table = document.getElementById("resTable");
+                resTable.innerHTML=`<tr>
+                                  <th>Event ID</th>
+                                  <th>Employee ID</th>
+                                  <th>Date</th>
+                                  <th>Time</th>
+                                  <th>Name</th>
+                                  <th>Location</th>
+                                  <th>Type ID</th>
+                                  <th></th></tr>`
+                
+                for(i=0;i<event.length;i++){
+                
+                let row=table.insertRow(1);
+                let cell1=row.insertCell(0);
+                let cell2=row.insertCell(1);
+                let cell3=row.insertCell(2);
+                let cell4=row.insertCell(3);
+                let cell5=row.insertCell(4);
+                let cell6=row.insertCell(5);
+                let cell7=row.insertCell(6);
+              
+
+                cell1.innerHTML=event[i].event_id
+                cell2.innerHTML=event[i].event_emp_id
+                cell3.innerHTML=event[i].date
+                cell4.innerHTML=event[i].time
+                cell5.innerHTML=event[i].name
+                cell6.innerHTML=event[i].location
+                cell7.innerHTML=event[i].type_id
+                
+                
+            }
+                
+                }
+                
+           }
+           
+        xhttp.open("GET", "http://localhost:8080/TuitionPro/getEvents.do", true);
+
+        xhttp.send();
+    
+    }
+    
+    function addGrade(){
+        let formid=document.getElementById("form").value;
+        let agrade=document.getElementById("grade").value;
+
+        let Event_Grade={
+            event_id:formid,
+            event_grade:agrade
+        }
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+        if(this.readyState == 4 && this.status == 200) {
+
+            console.log(this.responseText);
+
+            }
+
+        }
+
+    xhttp.open("POST", "http://localhost:8080/TuitionPro/addGrade.do", true);
+
+
+    xhttp.setRequestHeader('Content-Type','application/json');
+
+    xhttp.send(JSON.stringify(Event_Grade));
+
+
+    }
+</script>
+</html>
